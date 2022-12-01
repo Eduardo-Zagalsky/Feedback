@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<form id="login-form" method="post">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+    <p>
+        {{field.label}}
+        {{field (class_="form-control")}}
+    </p>
+    {% for error in field.errors %}
+    {{error}}
+    {% endfor %}
+    {% endfor %}
+    <button class="btn btn-info">Login</button>
+</form>
+{% endblock %}
