@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Register{% endblock %}
 {% block content %}
-<form id="pet-form" method="post">
+<form id="register-form" method="post">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
     <p>
         {{field.label}}
-        {{field}}
+        {{field (class_="form-control")}}
     </p>
     {% for error in field.errors %}
     {{error}}
     {% endfor %}
     {% endfor %}
-    <button>Submit</button>
+    <button class="btn btn-primary">Register</button>
 </form>
 {% endblock %}
