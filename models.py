@@ -44,5 +44,13 @@ class User(db.Model):
         else:
             return False
 
+    @property
     def full_name(self):
         return (f"{self.first_name} {self.last_name}")
+
+
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    username = db.Column(db.Foreignkey)
