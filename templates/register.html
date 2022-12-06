@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Register{% endblock %}
 {% block content %}
+{% for msg in get_flashed_messages() %}
+<p>{{ msg }}</p>
+{% endfor %}
 <form id="register-form" method="post">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
