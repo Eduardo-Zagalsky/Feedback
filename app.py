@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, session
+from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User
 from forms import AddUserForm, LoginForm
@@ -32,10 +32,11 @@ def new_user():
         first_name = form.first_name.data
         last_name = form.last_name.data
 
-        new_user = User.register(username, pwd, email, first_name, last_name)
+        user = User.register(username, pwd, email, first_name, last_name)
 
-        db.session.add(new_user)
+        db.session.add(user)
         db.session.commit()
+        session["username"] = user.username
         return redirect("/secret")
     else:
         return render_template("register.html", form=form)
@@ -51,14 +52,34 @@ def login_user():
         pwd = form.password.data
         user = User.authenticate(username, pwd)
         if user:
-            session["user_id"] = user.id
+            session["username"] = user.username
             return redirect("/secret")
         else:
             form.username.errors = ["Incorrect Username/Password"]
-    else:
-        return render_template("login.html", form=form)
+    return render_template("login.html", form=form)
 
 
 @app.route("/secret")
 def secret_page():
-    return render_template("")
+    user = session.get("username")
+    if user:
+        return redirect(f"/users/{user}")
+    else:
+        return redirect("/")
+
+
+@app.route("/logout")
+def logout():
+    session.pop("username")
+    return redirect("/")
+
+
+@app.route("/users/<username>")
+def user_info(username):
+    check_user = session.get("username")
+    if check_user == username:
+        user = User.query.get_or_404(username)
+        return render_template("user-info.html", user=user)
+    else:
+        flash("Must be logged in to view that page, please make an account or sign in")
+        return redirect("/")
