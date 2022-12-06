@@ -11,3 +11,10 @@ CREATE TABLE users (
     last_name varchar(30) NOT NULL
 );
 
+CREATE TABLE feedback (
+    id INTEGER serial PRIMARY KEY,
+    title varchar(100) NOT NULL,
+    content text NOT NULL,
+    username text REFERENCES users (username)
+);
+
