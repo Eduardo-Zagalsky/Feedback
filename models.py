@@ -53,4 +53,5 @@ class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    username = db.Column(db.Foreignkey)
+    username = db.relationship(
+        "User", backref="feedback", cascade="all, delete-orphan")
