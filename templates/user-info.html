@@ -4,4 +4,14 @@
 <h1>Welcome {{user.full_name()}}</h1>
 <h3>{{user.username}}</h3>
 <h6>{{user.email}}</h6>
+<hr>
+{% for feedback in user.feedback %}
+<a href="/feedback/{{feedback.id}}/update">{{feedback.title}}</a>
+<form action="/feedback/{{feedback.id}}/delete">
+    <button>X</button>
+</form>
+<p>{{feedback.content}}</p>
+{% endfor%}
+<form action="/users/{{feedback.username}}/feedback/add">Add Feedback</form>
+<form action="/users/{{feedback.username}}/delete">Delete User</form>
 {% endblock %}
