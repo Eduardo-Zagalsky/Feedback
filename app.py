@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User
-from forms import AddUserForm, LoginForm
+from models import db, connect_db, User, Feedback
+from forms import AddUserForm, LoginForm, FeedbackForm
 
 app = Flask(__name__)
 
@@ -83,3 +83,62 @@ def user_info(username):
     else:
         flash("Must be logged in to view that page, please make an account or sign in")
         return redirect("/")
+
+
+@app.route("/users/<username>/delete", method=["POST"])
+def delete_user(username):
+    check_user = session.get("username")
+    if check_user == username:
+        user = User.query.get_or_404(username)
+        db.session.delete(user)
+        session.pop("username")
+        db.session.commit()
+        flash("successfully removed user")
+        return redirect("/")
+    flash("Must be logged in to view that page, please make an account or sign in")
+    return redirect("/login")
+
+
+@app.route("/users/<username>/feedback/add", method=["GET", "POST"])
+def add_feedback(username):
+    form = FeedbackForm()
+    check_user = session.get("username")
+    if check_user == username:
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+            feedback = Feedback(title=title, content=content)
+            db.session.add(feedback)
+            db.session.commit()
+            return redirect(f"/users/{username}")
+        return render_template("feedback-form.html", form=form)
+    flash("Must be logged in to view that page, please make an account or sign in")
+    return redirect("/login")
+
+
+@app.route("/feedback/<int:feedback_id>/update", method=["GET", "POST"])
+def update_feedback(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+    form = FeedbackForm(obj=feedback)
+    user = session.get("username")
+    if user:
+        if form.validate_on_submit():
+            feedback.title = form.title.data
+            feedback.content = form.content.data
+            db.session.commit()
+            return redirect(f"/users/{user}")
+        return render_template("update-feedback.html", form=form)
+    flash("Must be logged in to view that page, please make an account or sign in")
+    return redirect("/login")
+
+
+@app.route("/feedback/<feedback_id>/delete", methods=["POST"])
+def delete_feedback(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+    user = session.get("username")
+    if user:
+        db.session.delete(feedback)
+        db.session.commit()
+        return redirect(f"/users/{user}")
+    flash("Must be logged in to view that page, please make an account or sign in")
+    return redirect("/login")
