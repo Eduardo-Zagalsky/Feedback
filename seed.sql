@@ -12,7 +12,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE feedback (
-    id INTEGER serial PRIMARY KEY,
+    id serial PRIMARY KEY,
     title varchar(100) NOT NULL,
     content text NOT NULL,
     username text REFERENCES users (username)
