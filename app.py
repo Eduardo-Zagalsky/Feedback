@@ -132,7 +132,7 @@ def update_feedback(feedback_id):
     return redirect("/login")
 
 
-@app.route("/feedback/<feedback_id>/delete", methods=["POST"])
+@app.route("/feedback/<feedback_id>/delete", method=["POST"])
 def delete_feedback(feedback_id):
     feedback = Feedback.query.get_or_404(feedback_id)
     user = session.get("username")
